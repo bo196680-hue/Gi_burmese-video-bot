@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 import sqlite3
@@ -6,10 +7,10 @@ from telegram import Update
 from telegram.constants import ChatAction
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-# ================= Configuration =================
-TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"      # BotFather မှ Bot Token
-HIGGSFIELD_API_KEY = "YOUR_HIGGSFIELD_API_KEY"      # Higgsfield API Key
-ADMIN_USER_ID = 123456789                           # ကိုယ့် Telegram User ID (ဂဏန်း)
+# ================= Configuration (Render Variables မှ တိုက်ရိုက်ဖတ်ယူခြင်း) =================
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+HIGGSFIELD_API_KEY = os.getenv("HIGGSFIELD_API_KEY", "").strip()
+ADMIN_USER_ID = int(os.getenv("ADMIN_USER_ID", "0").strip() or 0)
 
 BASE_URL = "https://api.higgsfield.ai"
 INITIAL_FREE_CREDITS = 1
@@ -156,6 +157,10 @@ async def handle_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await status_msg.edit_text(f"⚠️ ချို့ယွင်းချက်: {str(e)}")
 
 def main():
+    if not TELEGRAM_BOT_TOKEN:
+        print("❌ Error: TELEGRAM_BOT_TOKEN မရှိသေးပါ။ Environment Variables တွင် ထည့်သွင်းပေးပါ။")
+        return
+
     init_db()
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
