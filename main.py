@@ -82,6 +82,7 @@ def add_credits(user_id: int, amount: int):
 async def generate_video_from_higgsfield(prompt: str) -> str:
     headers = {
         "Authorization": f"Bearer {HIGGSFIELD_API_KEY}",
+        "X-API-Key": HIGGSFIELD_API_KEY,
         "Content-Type": "application/json"
     }
     payload = {
